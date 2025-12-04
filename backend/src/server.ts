@@ -4,6 +4,7 @@ import { Server } from "socket.io"
 import cors from "cors"
 import { chatSocket } from "./sockets/chatSocket.js"
 import { connectDB } from "./config/db.js"
+import router from "./chat.route.js"
 
 
 const app = express()
@@ -21,6 +22,11 @@ const io = new Server(server, {
         origin:"*",
     }
 })
+
+//Endpoints
+app.use("/api/messages",router)
+
+
 
 
 chatSocket(io)

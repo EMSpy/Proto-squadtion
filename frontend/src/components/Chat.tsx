@@ -13,6 +13,18 @@ export const Chat = () => {
 
 
     useEffect(() => {
+      const getAllMessages = async () => {
+        const res = await fetch("http://localhost:4000/api/messages")
+        const data = await res.json()
+        setMessages(data)
+      }
+
+      getAllMessages()
+    }, [])
+    
+
+
+    useEffect(() => {
         const handler = (data:{ username: string; message: string }) => {
             setMessages((prev) => [...prev, data]);
         };
@@ -36,7 +48,6 @@ export const Chat = () => {
     return (
         <div>
             <h2 className="title">Real time chat</h2>
-
 
             <input
                 placeholder="Name"
