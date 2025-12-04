@@ -16,7 +16,7 @@ export const chatSocket = ( io: Server) => {
                 [username, message]
             )
 
-            io.emit("recive_message", {username, message})
+            io.emit("receive_message", {username, message})
         })
 
         socket.on("disconnect", ()=> {
