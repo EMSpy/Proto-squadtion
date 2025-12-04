@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { socket } from "../socket";
 
 
@@ -10,22 +10,32 @@ export const Chat = () => {
     const [username, setUsername] = useState("");
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState<{ username: string; message: string }[]>([]);
-
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-      const getAllMessages = async () => {
-        const res = await fetch("http://localhost:4000/api/messages")
-        const data = await res.json()
-        setMessages(data)
-      }
+        const getAllMessages = async () => {
+            const res = await fetch("http://localhost:4000/api/messages")
+            const data = await res.json()
+            setMessages(data)
+        }
 
-      getAllMessages()
+        getAllMessages()
     }, [])
-    
+
+    const scrollToBottom = () => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight
+        }
+    }
 
 
     useEffect(() => {
-        const handler = (data:{ username: string; message: string }) => {
+        scrollToBottom();
+    }, [messages]);
+
+
+    useEffect(() => {
+        const handler = (data: { username: string; message: string }) => {
             setMessages((prev) => [...prev, data]);
         };
 
@@ -43,36 +53,40 @@ export const Chat = () => {
         setMessage("");
     };
 
-    console.log(messages)
+    /* console.log(messages) */
 
     return (
-        <div>
-            <h2 className="title">Real time chat</h2>
+        <div className="chat-container">
 
-            <input
-                placeholder="Name"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-            />
-
-            <input
-                placeholder="Mensgaje..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-            />
-
-            <button onClick={sendMessage}>Send</button>
+            <h2 className="title">Squadtion Chat</h2>
 
 
-            <div className="messageContainer">
+            <div className="message-content" ref={messagesEndRef}>
                 {
                     messages.map((m, i) => (
                         <div key={i} className="message">
-                            <h4>{m.username}</h4>
+                            <p>{m.username}</p>
                             <p>{m.message}</p>
                         </div>
                     ))
                 }
+            </div>
+
+            <div className="inputs-container">
+
+                <input
+                    placeholder="Name"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+
+                <input
+                    placeholder="Mensgaje..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                />
+
+                <button onClick={sendMessage}>Send</button>
             </div>
 
         </div>
