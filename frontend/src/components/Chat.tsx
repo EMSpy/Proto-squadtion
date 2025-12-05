@@ -53,6 +53,17 @@ export const Chat = () => {
         setMessage("");
     };
 
+    const sendMessageEnter = (e) => {
+        if (!username || !message) return;
+
+        if(e.key === "Enter"){
+            e.preventDefault();
+            
+            socket.emit("send_message", { username, message });
+            setMessage("");
+        }
+    };
+
     /* console.log(messages) */
 
     return (
@@ -81,9 +92,10 @@ export const Chat = () => {
                 />
 
                 <input
-                    placeholder="Mensgaje..."
+                    placeholder="Message..."
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={sendMessageEnter}
                 />
 
                 <button onClick={sendMessage}>Send</button>
