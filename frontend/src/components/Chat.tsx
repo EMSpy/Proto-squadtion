@@ -53,7 +53,7 @@ export const Chat = () => {
         setMessage("");
     };
 
-    const sendMessageEnter = (e) => {
+    const sendMessageEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (!username || !message) return;
 
         if(e.key === "Enter"){
@@ -64,7 +64,6 @@ export const Chat = () => {
         }
     };
 
-    /* console.log(messages) */
 
     return (
         <div className="chat-container">
