@@ -31,4 +31,7 @@ app.use("/api/messages",router)
 
 chatSocket(io)
 
+app.get("/health", (req, res) => res.json({ ok: true }));
+
+
 export default server

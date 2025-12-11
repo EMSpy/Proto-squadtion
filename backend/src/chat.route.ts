@@ -12,10 +12,31 @@ router.get("/", async (req, res) => {
         res.status(200).json(result.rows)
 
     } catch (error) {
-        res.status(404).json({message: "Error fetching message"})
+        res.status(404).json({ message: "Error fetching message" })
     }
 })
 
+
+router.get("/private/:userA/:userB", async (req, res) => {
+
+    const { userA, userB } = req.params
+
+    try {
+
+        const result = await db.query(
+            `SELECT sender as from, receiver as to, message, created_at
+             FROM private_messages
+             WHERE (sender = $1 AND receiver = $2) OR (sender = $2 AND receiver = $1)
+             ORDER BY created_at ASC`,
+            [userA, userB]
+        )
+
+        res.status(200).json(result.rows)
+
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching private messages" })
+    }
+})
 
 
 
