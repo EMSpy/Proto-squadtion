@@ -13,15 +13,24 @@ body {
 }
 
 
+.chatpage {
+    max-width: 450px;
+    margin-top: 4em;
+    display: flex;
+    gap: 1em;
+    flex-direction: row-reverse;
+    /*  border: 2px solid red; */
+}
+
 .chat-container {
     display: flex;
     flex-direction: column;
     gap: 1em;
-    margin-top: 4em;
     background-color: rgb(255, 243, 220);
     padding: 2em 1.5em;
     border-radius: 5px;
     box-shadow: 3px 5px 4px rgba(0, 0, 0, 0.267);
+
 }
 
 .title {
@@ -31,6 +40,10 @@ body {
     color: rgb(255, 255, 255);
     border-radius: 3px;
     font-family: Arial, Helvetica, sans-serif;
+}
+
+.titleGlobal {
+    color: rgb(129, 53, 39);
 }
 
 .inputs-container {
@@ -51,16 +64,18 @@ body {
     border: 2px solid rgba(197, 197, 197, 0.849);
     border-radius: 5px;
     padding: 7px;
+    width: 60%;
 }
 
 .inputs-container input:focus {
     border: 2px solid rgba(255, 166, 0, 0.849);
     outline: none;
- 
+
 }
 
 
 .message-content {
+    width: 400px;
     max-width: 450px;
     padding: 10px;
     border: 2px solid orange;
@@ -89,4 +104,59 @@ body {
     /*   overflow: hidden; */
     word-break: break-all;
     line-height: 20px;
+}
+
+
+
+/* user list */
+
+.userList {
+    min-width: 150px;
+    padding: 10px;
+    background-color: rgb(255, 243, 220);
+    border-radius: 3px;
+    box-shadow: 3px 5px 4px rgba(0, 0, 0, 0.267);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.userList h3 {
+    color: rgb(255, 136, 0);
+}
+
+.clobalBtn {
+    background-color: rgb(255, 145, 0);
+    width: 120px;
+    border-radius: 3px;
+    padding: 3px 10px;
+    color: white;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 16px;
+    user-select: none;
+}
+
+.users-container {
+    max-width: 450px;
+    padding: 10px;
+    overflow-y: auto;
+    height: 300px;
+}
+
+.user-item {
+    position: relative;
+    padding-left: 12px;
+    user-select: none;
+    margin-top: 1px;
+}
+
+.user-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background-color: #06b641;
+    border-radius: 50%;
 }
