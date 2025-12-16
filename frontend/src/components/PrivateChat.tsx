@@ -1,28 +1,29 @@
-
 import { useEffect, useRef, useState } from "react";
+import type { PrivateMessage } from "../types";
 import { socket } from "../socket";
 
 
+
 interface Props {
-  username: string;
+    me: string;
+    other: string;
 }
 
-export const Chat = ({username}:Props) => {
+export const PrivateChat = ({ me, other }: Props) => {
 
-
+    const [messages, setMessages] = useState<PrivateMessage[]>([]);
     const [message, setMessage] = useState("");
-    const [messages, setMessages] = useState<{ username: string; message: string }[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const getAllMessages = async () => {
-            const res = await fetch("http://localhost:4000/api/messages")
+            const res = await fetch(`http://localhost:4000/messages/private/${me}/${other}`)
             const data = await res.json()
             setMessages(data)
         }
-
         getAllMessages()
-    }, [])
+    }, [me, other]);
+
 
     const scrollToBottom = () => {
         if (messagesEndRef.current) {
@@ -36,48 +37,61 @@ export const Chat = ({username}:Props) => {
     }, [messages]);
 
 
-    useEffect(() => {
-        const handler = (data: { username: string; message: string }) => {
-            setMessages((prev) => [...prev, data]);
-        };
 
-        socket.on("receive_message", handler);
+    useEffect(() => {
+        const handler = (data: PrivateMessage) => {
+            if (data.from === other || data.from === me) {
+                setMessages(prev => [...prev, data])
+            }
+        }
+
+        socket.on("receive_private_message", handler);
 
         return () => {
-            socket.off("receive_message", handler);
-        };
-    }, []);
-
-    const sendMessage = () => {
-        if (!username || !message) return;
-
-        socket.emit("send_message", { username, message });
-        setMessage("");
-    };
-
-    const sendMessageEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (!username || !message) return;
-
-        if(e.key === "Enter"){
-            e.preventDefault();
-            
-            socket.emit("send_message", { username, message });
-            setMessage("");
+            socket.off("receive_private_message", handler);
         }
-    };
 
+    }, [me, other])
+
+    const send = () => {
+        if (!message) return
+
+        socket.emit("send_private_message", {
+            from: me,
+            to: other,
+            message,
+        })
+
+        setMessage("")
+    }
+
+    const sendEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (!message) return
+
+        if (e.key === "Enter") {
+            e.preventDefault();
+
+            socket.emit("send_private_message", {
+                from: me,
+                to: other,
+                message,
+            })
+
+            setMessage("")
+        }
+    }
 
     return (
         <div className="chat-container">
 
-            <h2 className="title">Squadtion Chat</h2>
+            <h2 className="title">Chat with {other}</h2>
 
 
             <div className="message-content" ref={messagesEndRef}>
                 {
                     messages.map((m, i) => (
                         <div key={i} className="message">
-                            <p>{m.username}</p>
+                            <p>{m.from}</p>
                             <p>{m.message}</p>
                         </div>
                     ))
@@ -86,20 +100,14 @@ export const Chat = ({username}:Props) => {
 
             <div className="inputs-container">
 
-           {/*      <input
-                    placeholder="Name"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                /> */}
-
                 <input
                     placeholder="Message..."
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    onKeyDown={sendMessageEnter}
+                    onKeyDown={sendEnter}
                 />
 
-                <button onClick={sendMessage}>Send</button>
+                <button onClick={send}>Send</button>
             </div>
 
         </div>
