@@ -17,7 +17,7 @@ export const PrivateChat = ({ me, other }: Props) => {
 
     useEffect(() => {
         const getAllMessages = async () => {
-            const res = await fetch(`http://localhost:4000/messages/private/${me}/${other}`)
+            const res = await fetch(`http://localhost:4000/api/messages/private/${me}/${other}`)
             const data = await res.json()
             setMessages(data)
         }

@@ -70,7 +70,7 @@ export const Chat = ({username}:Props) => {
     return (
         <div className="chat-container">
 
-            <h2 className="title">Squadtion Chat</h2>
+            <h2 className="title titleGlobal">Global Chat</h2>
 
 
             <div className="message-content" ref={messagesEndRef}>

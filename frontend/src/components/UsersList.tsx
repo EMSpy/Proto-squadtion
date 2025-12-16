@@ -25,13 +25,16 @@ export const UsersList = ({ me, onSelectUser }: Props) => {
 
 
     return (
-        <div>
+        <div className="userList">
             <h3>Online Users</h3>
+            <div className="clobalBtn" onClick={ ()=> onSelectUser("")}>Global chat</div>
+            <div className="users-container">
             {users.map(u => (
-                <div key={u} onClick={ ()=> onSelectUser(u)}>
+                <div className="user-item" key={u} onClick={ ()=> onSelectUser(u)}>
                     {u}
                 </div>
             ))}
+            </div>
         </div>
     )
 }
