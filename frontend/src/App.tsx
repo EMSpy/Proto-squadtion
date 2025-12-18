@@ -20,6 +20,17 @@ function App() {
     setLogged(true)
   }
 
+  const handleConnectEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!username) return
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+      socket.connect()
+      socket.emit("register_user", username)
+      setLogged(true)
+    }
+  }
+
   if (!logged) {
     return (
       <div className="loginchat-container">
@@ -30,6 +41,7 @@ function App() {
           placeholder="Name.."
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          onKeyDown={handleConnectEnter}
         />
         <button onClick={handleConnect}>Enter</button>
       </div>
