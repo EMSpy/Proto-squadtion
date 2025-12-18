@@ -22,9 +22,10 @@ function App() {
 
   if (!logged) {
     return (
-      <div>
-        <h2>Login chat</h2>
+      <div className="loginchat-container">
+        <h2 className="loginchat">Login</h2>
         <input
+          id="name"
           type="text"
           placeholder="Name.."
           value={username}
@@ -44,7 +45,7 @@ function App() {
 
       {
         chatWith ? <PrivateChat me={username} other={chatWith} />
-                  : <Chat username={username} />
+          : <Chat username={username} />
       }
     </div>
   )
