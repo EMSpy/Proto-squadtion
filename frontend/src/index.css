@@ -13,6 +13,45 @@ body {
 }
 
 
+.loginchat-container {
+    background-color: rgb(255, 145, 0);
+    padding: 20px 30px;
+    border-radius: 3px;
+    box-shadow: 3px 5px 4px rgba(0, 0, 0, 0.267);
+    margin-top: 5em;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 300px;
+    height: 200px;
+}
+
+
+.loginchat {
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+.loginchat-container input {
+    margin-right: 5px;
+    border: none;
+    padding: 3px;
+}
+
+.loginchat-container button {
+    border-radius: 3px;
+    border: none;
+    background-color: rgb(113, 97, 255);
+    color: orange;
+    padding: 3px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.267);
+    background-color: rgb(255, 243, 220);
+    font-weight: 600;
+    font-size: 15px;
+}
+
+
 .chatpage {
     max-width: 450px;
     margin-top: 4em;
