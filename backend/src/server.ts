@@ -5,6 +5,7 @@ import cors from "cors"
 import { chatSocket } from "./sockets/chatSocket.js"
 import { connectDB } from "./config/db.js"
 import router from "./chat.route.js"
+import authRouter from "./auth.route.js"
 
 
 const app = express()
@@ -24,6 +25,7 @@ const io = new Server(server, {
 })
 
 //Endpoints
+app.use("/api/auth",authRouter)
 app.use("/api/messages",router)
 
 
