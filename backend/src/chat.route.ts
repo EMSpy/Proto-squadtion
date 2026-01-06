@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { db } from "./config/db.js";
+import { authMiddleware } from "./middleware/authMiddleware.js";
 
 
 
 const router = Router()
 
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
 
     try {
         const result = await db.query("SELECT username, message FROM messages ORDER BY id ASC")
@@ -17,7 +18,7 @@ router.get("/", async (req, res) => {
 })
 
 
-router.get("/private/:userA/:userB", async (req, res) => {
+router.get("/private/:userA/:userB", authMiddleware, async (req, res) => {
 
     const { userA, userB } = req.params
 

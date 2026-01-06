@@ -6,6 +6,7 @@ import { chatSocket } from "./sockets/chatSocket.js"
 import { connectDB } from "./config/db.js"
 import router from "./chat.route.js"
 import authRouter from "./auth.route.js"
+import { socketAuthMiddleware } from "./middleware/socketMiddleware.js"
 
 
 const app = express()
@@ -30,7 +31,7 @@ app.use("/api/messages",router)
 
 
 
-
+io.use(socketAuthMiddleware);
 chatSocket(io)
 
 app.get("/health", (req, res) => res.json({ ok: true }));
