@@ -13,9 +13,29 @@ body {
 }
 
 
+.registeruser {
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.logoutbutton {
+    border-radius: 3px;
+    border: none;
+    background-color: rgb(113, 97, 255);
+    color: rgb(170, 170, 170);
+    padding: 5px 10px;
+    box-shadow: 1px 2px 1px rgba(0, 0, 0, 0.267);
+    background-color: rgb(255, 255, 255);
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+}
+
 .loginchat-container {
     background-color: rgb(255, 145, 0);
-    padding: 20px 30px;
+    padding: 25px 30px;
     border-radius: 3px;
     box-shadow: 3px 5px 4px rgba(0, 0, 0, 0.267);
     margin-top: 5em;
@@ -23,7 +43,9 @@ body {
     flex-direction: column;
     gap: 10px;
     width: 300px;
-    height: 200px;
+    height: auto;
+    min-height: min-content;
+
 }
 
 

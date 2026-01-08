@@ -1,66 +1,130 @@
-import { useState } from "react";
-import { Chat } from "./components/Chat"
+import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 import { socket } from "./socket";
+import { Chat } from "./components/Chat";
 import { UsersList } from "./components/UsersList";
 import { PrivateChat } from "./components/PrivateChat";
 
-
-
 function App() {
-
-  const [username, setUsername] = useState("");
-  const [logged, setLogged] = useState(false)
+  const [isRegistering, setIsRegistering] = useState(false); 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [userName, setUserName] = useState(""); 
+  
+  const [displayName, setDisplayName] = useState("");
+  const [logged, setLogged] = useState(false);
   const [chatWith, setChatWith] = useState<string | null>(null);
 
-  const handleConnect = () => {
-    if (!username) return
-
-    socket.connect()
-    socket.emit("register_user", username)
-    setLogged(true)
-  }
-
-  const handleConnectEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!username) return
-
-    if (e.key === "Enter") {
-      e.preventDefault();
-      socket.connect()
-      socket.emit("register_user", username)
-      setLogged(true)
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      try {
+        const decoded: any = jwtDecode(token);
+        setDisplayName(decoded.username);
+        setLogged(true);
+        socket.connect();
+      } catch (e) { handleLogout(); }
     }
-  }
+  }, []);
+
+  const handleAuth = async () => {
+    const endpoint = isRegistering ? "register" : "login";
+    const body = isRegistering 
+      ? { email, password, userName } 
+      : { email, password };
+
+    try {
+      const res = await fetch(`http://localhost:4000/api/auth/${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        if (isRegistering) {
+          alert("Account was created");
+          setIsRegistering(false); 
+        } else {
+          Cookies.set("token", data.token, { expires: 1 });
+          setDisplayName(data.username);
+          setLogged(true);
+          socket.connect();
+        }
+      } else {
+        alert(data.message || "Error in the process");
+      }
+    } catch (error) {
+      console.error("Auth error:", error);
+    }
+  };
+
+  const handleLogout = () => {
+    Cookies.remove("token");
+    socket.disconnect();
+    setLogged(false);
+    setChatWith(null);
+  };
 
   if (!logged) {
     return (
-      <div className="loginchat-container">
-        <h2 className="loginchat">Login</h2>
+      <div className="loginchat-container" style={{ height: isRegistering ? 'auto' : '200px' }}>
+        <h2 className="loginchat">{isRegistering ? "Create Account" : "Login"}</h2>
+        
+        {isRegistering && (
+          <input
+            type="text"
+            placeholder="User Name"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+          />
+        )}
+        
         <input
-          id="name"
-          type="text"
-          placeholder="Name.."
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          onKeyDown={handleConnectEnter}
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
-        <button onClick={handleConnect}>Enter</button>
+        
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button onClick={handleAuth}>
+          {isRegistering ? "Register" : "Sign In"}
+        </button>
+
+        <p  className="registeruser"
+           onClick={() => setIsRegistering(!isRegistering)}>
+          {isRegistering ? "If you have an account go to login" : "If you do not have account go to create one"}
+        </p>
       </div>
-    )
+    );
   }
 
-
-
   return (
-    <div className="chatpage">
+    <div className="chat-app-wrapper">
+      <header style={{ color: 'white', display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
+        <span>User: <strong>{displayName}</strong></span>
+        <button className="logoutbutton" onClick={handleLogout}>Log out</button>
+      </header>
 
-      <UsersList me={username} onSelectUser={setChatWith} />
-
-      {
-        chatWith ? <PrivateChat me={username} other={chatWith} />
-          : <Chat username={username} />
-      }
+      <div className="chatpage">
+        <UsersList me={displayName} onSelectUser={setChatWith} />
+        {chatWith ? (
+          <PrivateChat me={displayName} other={chatWith} />
+        ) : (
+          <Chat username={displayName} />
+        )}
+      </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
