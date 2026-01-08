@@ -7,11 +7,11 @@ import { UsersList } from "./components/UsersList";
 import { PrivateChat } from "./components/PrivateChat";
 
 function App() {
-  const [isRegistering, setIsRegistering] = useState(false); 
+  const [isRegistering, setIsRegistering] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userName, setUserName] = useState(""); 
-  
+  const [userName, setUserName] = useState("");
+
   const [displayName, setDisplayName] = useState("");
   const [logged, setLogged] = useState(false);
   const [chatWith, setChatWith] = useState<string | null>(null);
@@ -28,39 +28,51 @@ function App() {
     }
   }, []);
 
-  const handleAuth = async () => {
-    const endpoint = isRegistering ? "register" : "login";
-    const body = isRegistering 
-      ? { email, password, userName } 
-      : { email, password };
 
-    try {
-      const res = await fetch(`http://localhost:4000/api/auth/${endpoint}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+const handleAuth = async () => {
 
-      const data = await res.json();
+  if (!email.trim() || !password.trim()) {
+    alert("Please fill in Email and Password");
+    return; 
+  }
 
-      if (res.ok) {
-        if (isRegistering) {
-          alert("Account was created");
-          setIsRegistering(false); 
-        } else {
-          Cookies.set("token", data.token, { expires: 1 });
-          setDisplayName(data.username);
-          setLogged(true);
-          socket.connect();
-        }
+  if (isRegistering && !userName.trim()) {
+    alert("Please enter a Username for registration");
+    return;
+  }
+
+  const endpoint = isRegistering ? "register" : "login";
+  const body = isRegistering 
+    ? { email, password, userName } 
+    : { email, password };
+
+  try {
+    const res = await fetch(`http://localhost:4000/api/auth/${endpoint}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      if (isRegistering) {
+        alert("Account was created");
+        setIsRegistering(false); 
       } else {
-        alert(data.message || "Error in the process");
+        Cookies.set("token", data.token, { expires: 1 });
+        setDisplayName(data.username);
+        setLogged(true);
+        socket.connect();
       }
-    } catch (error) {
-      console.error("Auth error:", error);
+    } else {
+      alert(data.message || "Error in the process");
     }
-  };
-
+  } catch (error) {
+    console.error("Auth error:", error);
+    alert("Connection error with the server");
+  }
+};
   const handleLogout = () => {
     Cookies.remove("token");
     socket.disconnect();
@@ -72,7 +84,7 @@ function App() {
     return (
       <div className="loginchat-container" style={{ height: isRegistering ? 'auto' : '200px' }}>
         <h2 className="loginchat">{isRegistering ? "Create Account" : "Login"}</h2>
-        
+
         {isRegistering && (
           <input
             type="text"
@@ -81,14 +93,14 @@ function App() {
             onChange={(e) => setUserName(e.target.value)}
           />
         )}
-        
+
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        
+
         <input
           type="password"
           placeholder="Password"
@@ -96,12 +108,16 @@ function App() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button onClick={handleAuth}>
-          {isRegistering ? "Register" : "Sign In"}
+        <button
+          onClick={handleAuth}
+          disabled={!email || !password || (isRegistering && !userName)}
+          style={{ opacity: (!email || !password) ? 0.5 : 1 }}
+        >
+          {isRegistering ? "Sign Up" : "Sign In"}
         </button>
 
-        <p  className="registeruser"
-           onClick={() => setIsRegistering(!isRegistering)}>
+        <p className="registeruser"
+          onClick={() => setIsRegistering(!isRegistering)}>
           {isRegistering ? "If you have an account go to login" : "If you do not have account go to create one"}
         </p>
       </div>
