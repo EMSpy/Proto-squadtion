@@ -15,6 +15,8 @@ function App() {
   const [displayName, setDisplayName] = useState("");
   const [logged, setLogged] = useState(false);
   const [chatWith, setChatWith] = useState<string | null>(null);
+  const [error, setError] = useState<string | false>(false)
+  const [message, setMessage] = useState<string | false>(false)
 
   useEffect(() => {
     const token = Cookies.get("token");
@@ -34,32 +36,32 @@ const handleAuth = async () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!email.trim() || !password.trim()) {
-    alert("Please fill in Email and Password");
+    setError("Please fill in Email and Password");
     return; 
   }
 
   if (!emailRegex.test(email)) {
-    alert("Please enter a valid email address (e.g., user@example.com)");
+     setError("Please enter a valid email address (e.g., user@example.com)");
     return;
   }
 
   if (password.length < 5) {
-    alert("Password must be at least 5 characters long");
+     setError("Password must be at least 5 characters long");
     return;
   }
 
   if (isRegistering && !userName.trim()) {
-    alert("Please enter a Username for registration");
+     setError("Please enter a Username for registration");
     return;
   }
 
   if (isRegistering) {
     if (!userName.trim()) {
-      alert("Username is required for registration");
+       setError("Username is required for registration");
       return;
     }
     if (userName.trim().length < 5) {
-      alert("Username must be at least 5 characters long");
+       setError("Username must be at least 5 characters long");
       return;
     }
   }
@@ -80,7 +82,7 @@ const handleAuth = async () => {
 
     if (res.ok) {
       if (isRegistering) {
-        alert("Account was created");
+        setMessage("Account was created")
         setIsRegistering(false); 
       } else {
         Cookies.set("token", data.token, { expires: 1 });
@@ -89,11 +91,11 @@ const handleAuth = async () => {
         socket.connect();
       }
     } else {
-      alert(data.message || "Error in the process");
+       setError(data.message || "Error in the process");
     }
   } catch (error) {
     console.error("Auth error:", error);
-    alert("Connection error with the server");
+     setError("Connection error with the server");
   }
 };
   const handleLogout = () => {
@@ -102,6 +104,18 @@ const handleAuth = async () => {
     setLogged(false);
     setChatWith(null);
   };
+
+
+  if(error) {
+    setTimeout(() => {
+      setError(false)
+    }, 4000);
+  }
+  if(message) {
+    setTimeout(() => {
+      setMessage(false)
+    }, 4000);
+  }
 
   if (!logged) {
     return (
@@ -139,6 +153,8 @@ const handleAuth = async () => {
           {isRegistering ? "Sign Up" : "Sign In"}
         </button>
 
+          { error && <p className="errorlabel">{error}</p> }
+          { message && <p className="succeslabel">{message}</p> }
         <p className="registeruser"
           onClick={() => setIsRegistering(!isRegistering)}>
           {isRegistering ? "If you have an account go to login" : "If you do not have account go to create one"}
