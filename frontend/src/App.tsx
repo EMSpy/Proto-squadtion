@@ -31,14 +31,37 @@ function App() {
 
 const handleAuth = async () => {
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   if (!email.trim() || !password.trim()) {
     alert("Please fill in Email and Password");
     return; 
   }
 
+  if (!emailRegex.test(email)) {
+    alert("Please enter a valid email address (e.g., user@example.com)");
+    return;
+  }
+
+  if (password.length < 5) {
+    alert("Password must be at least 5 characters long");
+    return;
+  }
+
   if (isRegistering && !userName.trim()) {
     alert("Please enter a Username for registration");
     return;
+  }
+
+  if (isRegistering) {
+    if (!userName.trim()) {
+      alert("Username is required for registration");
+      return;
+    }
+    if (userName.trim().length < 5) {
+      alert("Username must be at least 5 characters long");
+      return;
+    }
   }
 
   const endpoint = isRegistering ? "register" : "login";
