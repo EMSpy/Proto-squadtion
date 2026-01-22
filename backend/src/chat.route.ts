@@ -18,6 +18,19 @@ router.get("/", authMiddleware, async (req, res) => {
 })
 
 
+
+router.get("/all-users", authMiddleware, async (red, res) => {
+
+    try {
+        const result =  await db.query("SELECT username FROM users")
+        res.status(200).json(result.rows)
+        
+    } catch (error) {
+        res.status(500).json({ message:"Internal server error"})
+    }
+})
+
+
 router.get("/private/:userA/:userB", authMiddleware, async (req, res) => {
 
     const { userA, userB } = req.params
