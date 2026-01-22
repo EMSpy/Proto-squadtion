@@ -227,6 +227,7 @@ body {
     padding: 10px;
     overflow-y: auto;
     height: 300px;
+    overflow-y: auto;
 }
 
 .user-item {
