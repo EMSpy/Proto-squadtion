@@ -1,8 +1,0 @@
-﻿# Proto-squadtion
-
-## Real-Time Chat App Prototype
-
-
-A lightweight real-time chat prototype built with WebSockets. It allows users to join the chat with a username, send messages instantly, and see all messages updated live. Designed to demonstrate the core functionality of a chat system, including message broadcasting, event handling, and a clean, minimal UI.
-
-### Auth for user coming soon
